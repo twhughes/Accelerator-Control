@@ -2,9 +2,6 @@ import numpy as np
 import numpy.random as npr
 import scipy.sparse as sp
 
-from .linalg import make_M, make_layer_matrix, make_partial_matrix, make_full_matrix
-
-
 class MZI:
 
     def __init__(self, phi1=None, phi2=None):
@@ -16,10 +13,22 @@ class MZI:
 
         self._phi1 = phi1
         self._phi2 = phi2
-        self.M = make_M(self._phi1, self._phi2)
+        self.M = self.make_M(self._phi1, self._phi2)
 
     def __repr__(self):
         return 'MZI with \n\tphi1 = {}\n\tphi2 = {}\n\tmatrix = \n{}'.format(self._phi1, self._phi2, self.M)
+
+    @staticmethod
+    def make_M(phi1, phi2):
+        # returns a 2x2 tunable beam splitter (MZI) transfer matrix
+        # given the settings of the two integrated phase shifters: phi1, phi2
+        M = np.zeros((2, 2), dtype=complex)
+        M[0, 0] = np.cos(phi2/2)
+        M[1, 0] = -np.sin(phi2/2)
+        M[0, 1] = np.exp(1j*phi1)*np.sin(phi2/2)
+        M[1, 1] = np.exp(1j*phi1)*np.cos(phi2/2)
+        M      = np.exp(1j*phi2/2)*M
+        return M
 
     @property
     def phi1(self):
@@ -28,7 +37,7 @@ class MZI:
     @phi1.setter
     def phi1(self, phi_new):
         self._phi1 = phi_new
-        self.M = make_M(self._phi1, self._phi2)
+        self.M = self.make_M(self._phi1, self._phi2)
 
     @property
     def phi2(self):
@@ -37,7 +46,7 @@ class MZI:
     @phi2.setter
     def phi2(self, phi_new):
         self._phi2 = phi_new
-        self.M = make_M(self._phi1, self._phi2)
+        self.M = self.make_M(self._phi1, self._phi2)
 
 
 class Layer:

@@ -3,7 +3,7 @@ from numpy.linalg import det
 import numpy.random as npr
 import numpy as np
 
-from DLA_Control.mesh import MZI, Layer, Mesh
+from DLA_Control import MZI, Layer, Mesh
 
 class TestMesh(unittest.TestCase):
     """ Code for testing the MZI mesh"""
@@ -54,7 +54,7 @@ class TestMesh(unittest.TestCase):
 
         # make sure its still unitary
         self.is_unitary(L.M)
-        
+
         # make sure resetting works
         L.reset_MZI(offset=2, phi1=0, phi2=0)
 

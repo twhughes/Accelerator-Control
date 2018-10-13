@@ -4,6 +4,8 @@ This code is used to simulate an MZI mesh used for phase and amplitude control o
 
 For more information, see [this paper](https://arxiv.org/abs/1709.04441).
 
-## Code Structure
+### Tests
+To run tests:
 
-The code is contained in the `DLA_Control` module.
+    python -m unittest discover tests
+
