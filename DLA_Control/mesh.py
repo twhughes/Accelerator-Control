@@ -108,7 +108,7 @@ class Mesh:
 
         # set up the matrices
         self.full_matrix = np.eye(N, dtype=np.complex64)
-        self.partial_matrices = []
+        self.partial_matrices = [np.eye(N, dtype=np.complex64)]
 
         # construct the mesh
         self.construct_mesh()
@@ -128,11 +128,8 @@ class Mesh:
     def add_layer(self, L):
         """ Adds a new layer to the mesh and computes the partial matrices"""
         self.layers.append(L)
-        if not self.partial_matrices:
-            self.partial_matrices.append(L.M)
-        else:
-            new_partial_M = np.dot(self.partial_matrices[-1], L.M)
-            self.partial_matrices.append(new_partial_M)
+        new_partial_M = np.dot(self.partial_matrices[-1], L.M)
+        self.partial_matrices.append(new_partial_M)
         self.full_matrix = self.partial_matrices[-1]
 
     def construct_mesh(self):
@@ -170,6 +167,5 @@ class Mesh:
                     mzi = MZI()   # random MZI
                 else:
                     mzi = MZI(0, 0)                
-                mzi = MZI()   # random MZI
                 L.embed_MZI(mzi, offset=port_index)
                 self.add_layer(L)
