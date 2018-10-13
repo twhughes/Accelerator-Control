@@ -9,13 +9,19 @@ def make_M(phi1, phi2):
     # returns a 2x2 tunable beam splitter (MZI) transfer matrix
     # given the settings of the two integrated phase shifters: phi1, phi2
     M = np.zeros((2, 2), dtype=complex)
-    M[0, 0] = -np.sin(phi2/2)
+    M[0, 0] = np.cos(phi2/2)
+    M[1, 0] = -np.sin(phi2/2)
+    M[0, 1] = np.exp(1j*phi1)*np.sin(phi2/2)
+    M[1, 1] = np.exp(1j*phi1)*np.cos(phi2/2)
+    M      = np.exp(1j*phi2/2)*M
+    return M
+
+"""    M[0, 0] = -np.sin(phi2/2)
     M[1, 0] =  np.cos(phi2/2)
     M[0, 1] =  np.exp(1j*phi1)*np.cos(phi2/2)
     M[1, 1] =  np.exp(1j*phi1)*np.sin(phi2/2)
     M      = -1j*np.exp(1j*phi2/2)*M
-    return M
-
+    """
 
 def make_layer_matrix(N, layer_index, phi1, phi2):
     # gives the transfer matrix for the layer_index-th layer of the total system

@@ -6,7 +6,6 @@ import numpy as np
 from DLA_Control.linalg import (make_M, make_layer_matrix, make_partial_matrix,
     make_full_matrix)
 
-
 class TestMZI(unittest.TestCase):
     """ Code for testing the MZI mesh"""
     def setUp(self):
@@ -32,6 +31,9 @@ class TestMZI(unittest.TestCase):
 
         # check if it's unitary
         self.is_unitary(M)
+
+        M = make_M(0, 0)
+        np.testing.assert_array_almost_equal(M, np.eye(2))
 
     def test_layer_matrix(self):
 
