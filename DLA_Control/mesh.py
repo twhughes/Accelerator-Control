@@ -1,6 +1,9 @@
 import numpy as np
 import numpy.random as npr
 import scipy.sparse as sp
+import matplotlib.pylab as plt
+
+from DLA_Control.utils import power_tot, power_vec
 
 class MZI:
 
@@ -110,7 +113,7 @@ class Mesh:
                 self.M = M
         # triangular mesh type has a fixed depth
         elif self.mesh_type == 'triangular':
-            self.M = 2*N - 1
+            self.M = 2*N - 3
         else:
             raise ValueError("'mesh_type' must be one of {'clements','triangular'}")
 
@@ -121,6 +124,7 @@ class Mesh:
 
         # construct the mesh
         self.construct_mesh()
+        self.coupled = False  # whether light has been coupled in
 
     def __repr__(self):
         """ prints the mesh """
@@ -189,4 +193,26 @@ class Mesh:
             layer_value = np.dot(p_mat, self.input_values)
             self.partial_values.append(layer_value)
         self.output_values = np.dot(self.full_matrix, self.input_values)
+        self.coupled = True
+
+    def get_layer_powers(self, layer_index):
+        # returns the power right BEFORE layer index (0 = input)
+        if not self.coupled:
+            raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
+        partial_values = self.partial_values[layer_index]
+        return power_vec(partial_values)
+
+    def plot_powers(self):
+        # plots the powers throughout the mesh (must have run mesh.input_couple() first)
+        if not self.coupled:
+            raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
+        power_im = np.zeros((self.N, self.M+1))
+        for layer_index in range(0, self.M+1):
+            power_im[:, layer_index] = self.get_layer_powers(layer_index)
+        plt.xlabel('layer index')
+        plt.ylabel('port index')        
+        plt.imshow(power_im, cmap='magma')
+        plt.title('power in each layer')
+        plt.colorbar()
+        plt.show()
 

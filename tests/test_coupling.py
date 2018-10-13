@@ -1,18 +1,19 @@
 import unittest
-from numpy.linalg import det
+from numpy.linalg import norm
 import numpy.random as npr
 import numpy as np
 from numpy.testing.utils import assert_array_compare
 import operator
+from DLA_Control.utils import power_tot, power_vec, normalize_vec
 
-# from controller import ControllerFactory
 from DLA_Control import Mesh
+from DLA_Control import TriangleOptimizer
 
 class TestCoupling(unittest.TestCase):
     """ Code for testing the MZI controllers"""
     def setUp(self):
 
-        self.N = 10
+        self.N = 100
         self.mesh_t = Mesh(self.N, mesh_type='triangular', initialization='random', M=None)
         self.mesh_c_r = Mesh(self.N, mesh_type='clements', initialization='random', M=None)
         self.mesh_c_z = Mesh(self.N, mesh_type='clements', initialization='zeros', M=None)
@@ -58,6 +59,17 @@ class TestCoupling(unittest.TestCase):
         # same goes for the partial values within MZI
         for partial_value in self.mesh_t.partial_values:
             assert_array_compare(operator.__ne__, input_values, output_values)
+
+    def test_optimize_triangular(self):
+
+        input_values = np.zeros((self.N,))
+        input_values[self.N//2] = 1
+
+        output_target = np.ones((self.N,))
+        output_target = normalize_vec(output_target)
+
+        TO = TriangleOptimizer(self.mesh_c_r, input_values=input_values, output_target=output_target)
+        TO.optimize()
 
 if __name__ == '__main__':
     unittest.main()

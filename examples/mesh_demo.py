@@ -1,4 +1,7 @@
-from DLA_Control.mesh import Mesh
+import numpy as np
+
+from DLA_Control import Mesh
+from DLA_Control.utils import normalize_vec
 
 # simple demo of mesh creation and manipulation
 
@@ -57,3 +60,15 @@ mesh = Mesh(N, mesh_type='triangular', initialization='zeros', M=None)
 print('zeros initialization leads to an identity transfer matrix:')
 print(mesh.full_matrix)
 print('')
+
+# we can couple light into the meshes
+N = 50
+mesh = Mesh(N, mesh_type='clements', initialization='random', M=None)
+
+input_values = np.zeros((N,))
+input_values[N//2] = 1
+
+mesh.input_couple(input_values)
+
+# and plot the results
+mesh.plot_powers()
