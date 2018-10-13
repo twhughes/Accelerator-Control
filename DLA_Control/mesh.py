@@ -142,7 +142,7 @@ class Mesh:
         self.full_matrix = self.partial_matrices[-1]
 
     def construct_mesh(self):
-
+        """ Makes the mesh """
         if self.mesh_type == 'clements':
             for layer_index in range(self.M):
                 L = Layer(self.N)
@@ -178,3 +178,15 @@ class Mesh:
                     mzi = MZI(0, 0)                
                 L.embed_MZI(mzi, offset=port_index)
                 self.add_layer(L)
+
+    def input_couple(self, input_values):
+        """ Specify input coupling (complex) values to mesh.
+            Compute the fields at each layer of the structure.
+            And at the output of the structure  """
+        self.input_values = input_values
+        self.partial_values = []
+        for p_mat in self.partial_matrices:
+            layer_value = np.dot(p_mat, self.input_values)
+            self.partial_values.append(layer_value)
+        self.output_values = np.dot(self.full_matrix, self.input_values)
+
