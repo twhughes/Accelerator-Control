@@ -83,7 +83,7 @@ class ClementsOptimizer(Optimizer):
         # optimizes a clements mesh by attempting to get close to target each layer
 
         # loop through layers
-        for layer_index in range(self.M):
+        for layer_index in reversed(range(self.M)):
 
             # get previous powers and layer
             values_prev = self.mesh.partial_values[layer_index]        
