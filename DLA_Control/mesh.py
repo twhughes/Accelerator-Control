@@ -3,7 +3,7 @@ import numpy.random as npr
 import scipy.sparse as sp
 import matplotlib.pylab as plt
 
-from DLA_Control.utils import power_tot, power_vec
+from DLA_Control.utils import power_tot, power_vec, normalize_vec
 
 class MZI:
 
@@ -195,8 +195,8 @@ class Mesh:
     def input_couple(self, input_values):
         """ Specify input coupling (complex) values to mesh.
             Compute the fields at each layer of the structure.
-            And at the output of the structure  """
-        self.input_values = input_values
+            And at the output of the structure  """        
+        self.input_values = normalize_vec(input_values)
         self.partial_values = []
         for p_mat in self.partial_matrices:
             layer_value = np.dot(p_mat, self.input_values)
@@ -211,21 +211,21 @@ class Mesh:
         partial_values = self.partial_values[layer_index]
         return power_vec(partial_values)
 
-    def plot_powers(self, scale='linear'):
+    def plot_powers(self, ax=None):
         # plots the powers throughout the mesh (must have run mesh.input_couple() first)
         if not self.coupled:
             raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
+
+        if ax is None:
+            fig, ax = plt.subplots(1, constrained_layout=True)
+
         power_im = np.zeros((self.N, self.M+1))
         for layer_index in range(0, self.M+1):
             power_im[:, layer_index] = self.get_layer_powers(layer_index)[:,0]
-        plt.xlabel('layer index')
-        plt.ylabel('port index') 
-        if scale == 'linear':
-            im = plt.imshow(power_im, cmap='magma')
-            plt.title('power in each layer')
-        elif scale == 'log':
-            im = plt.imshow(np.log(power_im), cmap='magma')
-            plt.title('log(power) in each layer')        
-        plt.colorbar(im, fraction=0.027, pad=0.04)
-        plt.show()
 
+        ax.set_xlabel('layer index')
+        ax.set_ylabel('port index') 
+        im = ax.imshow(power_im, cmap='magma')
+        ax.set_title('power in each layer')       
+        plt.colorbar(im, ax=ax, fraction=0.027, pad=0.04)
+        return ax

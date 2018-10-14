@@ -121,50 +121,52 @@ class TriangleOptimizer(Optimizer):
         # optimizes a triangular mesh by spreading power when possible
 
         # z is the projected coupling from each measuring point to each output
-        output_target_pow = power_vec(self.output_target)
-        P0 = output_target_pow[0]
+        P = power_vec(self.output_target)
+        P0 = P[0]
+        I = power_vec(self.mesh.partial_values[0])
+        M = np.zeros((self.N, 1))
 
         # loop through layers
         for layer_index in range(self.M//2):
 
-            values_prev = self.mesh.partial_values[layer_index]
-            powers_prev = power_vec(values_prev)
             layer = self.mesh.layers[layer_index]
+            values_prev = self.mesh.partial_values[layer_index]
+            port_index = (self.N - 1) - layer_index
 
-            port_index = self.N - layer_index - 1
-            print('layer: ', layer_index)
-            print('port: ', port_index)
-            print('pos: ', port_index-1, self.N-1)
-            print('neg: ', port_index+1, self.N-1)
+            P_avg = 4*(1 - np.sum(P[1:port_index+1])) / (self.N - 1)
+            # P_avg = (1 - P0) / (self.N - 1)
 
-            P_req = np.sum(output_target_pow[port_index-1:self.N-1])
-            P_req -= np.sum(powers_prev[port_index+1:self.N-1])
-            print(np.sum(powers_prev[port_index+1:self.N-1]))
-            m_layer = min(P_req, (1-P0)/(self.N-1))
-            desired_out_power = powers_prev
-            desired_out_power[self.N-layer_index-1] = m_layer
-            desired_out_power[self.N-layer_index-2] =  np.sum(powers_prev) - m_layer
+            D = power_vec(values_prev)
+            P_sum = np.sum(P[port_index - 1:])
+            M_sum = np.sum(D[port_index + 1:])
+
+            P_rem = 1 - P_sum
+            P_avg = (1 - P0 - M_sum) / (self.N - 1 - layer_index)
+
+            D[port_index] = min(P_avg, P_sum - M_sum)
+            D[port_index - 1] = 0
+            D[port_index - 1] = 1 - np.sum(D)
 
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
-                                        desired_power=desired_out_power, verbose=verbose)
+                                        desired_power=D, verbose=verbose)
 
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
         
-        desired_out_power = output_target_pow
         for layer_index in range(self.M//2, self.M):
             values_prev = self.mesh.partial_values[layer_index]
             powers_prev = power_vec(values_prev)            
             layer = self.mesh.layers[layer_index]
 
             index_over = layer_index - self.M//2
-            desired_out_power = np.zeros((self.N, 1))            
-            desired_out_power[index_over] = output_target_pow[index_over]
-            desired_out_power[index_over+1] = 1-np.sum(output_target_pow[:index_over+1])
+            D = np.zeros((self.N, 1))
+            D[index_over] = P[index_over] 
+            P_in = np.sum(powers_prev[index_over:index_over+2])
+            D[index_over+1] = P_in - P[index_over]
 
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
-                                        desired_power=desired_out_power, verbose=verbose)
+                                        desired_power=D, verbose=verbose)
 
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
