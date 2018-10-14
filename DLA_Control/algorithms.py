@@ -72,81 +72,125 @@ class TriangleOptimizer(Optimizer):
         self.mesh.input_couple(self.input_values)
 
         if algorithm == 'up_down':
-            self.optimize_top_down(verbose=verbose)
+            self.optimize_up_down(verbose=verbose)
         elif algorithm == 'spread':
             self.optimize_spread(verbose=verbose)
         else:
             raise ValueError('algorithm "{}" not recognized'.format(algorithm))
 
-    def optimize_top_down(self, verbose=False):
-        # optimizes a triangular mesh by pushing power to the top port first
+    def optimize_up_down(self, verbose=False):
+        # optimizes a triangular mesh by two step process
 
-        # loop from layers bottom to top
+        """ BASIC IDEA:
+                With the upward pass, we can push all of the power into the top MZI
+                Then, on the downward pass, we can redistribute the power to the output ports as it is needed.
+                This is simple and effective, but concentrates power, which isn't good for DLA.
+                See 'spread' algorithm for an improvement
+        """        
+
+        # loop throgh MZI from bottom layers to top
         for layer_index in range(self.M//2):
 
-            values_prev = self.mesh.partial_values[layer_index]
+            # get the previous field values, the current layer, and the port index
+            values_prev = self.mesh.partial_values[layer_index]        
             layer = self.mesh.layers[layer_index]
-            desired_out_power = np.zeros((self.N, 1))
-            desired_out_power[self.N-layer_index-2] = 1
+            port_index = (self.N - 1) - layer_index
 
+            # make desired output vector for this layer 'D'
+            # all of the power from this MZI should go to the top port
+            D = np.zeros((self.N, 1))
+            D[port_index - 1] = 1
+
+            # tune the layer
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
-                                        desired_power=desired_out_power, verbose=verbose)
+                                        desired_power=D, verbose=verbose)
 
+            # insert into the mesh and recompute / recouple
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
         
-        # loop from top to bottom        
+        # loop throgh MZI from top layers to bottom
         for layer_index in range(self.M//2, self.M):
+
+            # get the previous field values, the current layer, and the port index
             values_prev = self.mesh.partial_values[layer_index]
             layer = self.mesh.layers[layer_index]
+            port_index = layer_index - self.M//2
 
-            index_over = layer_index - self.M//2
-            desired_out_power = np.zeros((self.N, 1))
-            output_target_pow = power_vec(self.output_target)
+            # output target powers
+            P = power_vec(self.output_target)
 
-            desired_out_power[index_over] = output_target_pow[index_over]
-            desired_out_power[index_over+1] = 1-np.sum(output_target_pow[:index_over+1])
+            # make desired output vector for this layer 'D'            
+            D = np.zeros((self.N, 1))
 
+            # the desired output power for this port is the target output
+            D[port_index] = P[port_index]
+
+            # the desired output power for the next port is the remaining power          
+            D[port_index+1] = 1-np.sum(P[:port_index + 1])
+
+            # set this layer
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
-                                        desired_power=desired_out_power, verbose=verbose)
+                                        desired_power=D, verbose=verbose)
 
+            # insert into the mesh and recompute / recouple
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
 
 
     def optimize_spread(self, verbose=False):
-        # NEEDS WORK!
         # optimizes a triangular mesh by spreading power when possible
 
-        # z is the projected coupling from each measuring point to each output
-        P = power_vec(self.output_target)
+        """ BASIC IDEA:
+                The problem with up down is the power gets concentrated at the top
+                Here, we try to spread the power evenly in the middle section.
+                Only push power up if it is needed in the top out ports.
+                Otherwise, keep power distributed.
+        """
+
+        # target output powers
+        P = power_vec(self.output_target)        
         P0 = P[0]
+
+        # input powers
         I = power_vec(self.mesh.partial_values[0])
+
+        # middle section powers
         M = np.zeros((self.N, 1))
 
-        # loop through layers
+        # iterate from bottom to top
         for layer_index in range(self.M//2):
 
+            # get the layer, previous field values, and port index
             layer = self.mesh.layers[layer_index]
             values_prev = self.mesh.partial_values[layer_index]
             port_index = (self.N - 1) - layer_index
 
-            P_avg = 4*(1 - np.sum(P[1:port_index+1])) / (self.N - 1)
-            # P_avg = (1 - P0) / (self.N - 1)
-
+            # construct a 'desired' power array for the output of this layer (equal to previous powers to start)
             D = power_vec(values_prev)
+
+            # sum the desired powers that are supplied by this port
             P_sum = np.sum(P[port_index - 1:])
+
+            # sum the existing middle powers that can also contribute
             M_sum = np.sum(D[port_index + 1:])
 
+            # the remaining power to be spread over the middle ports
             P_rem = 1 - P_sum
+
+            # split this remaining power evenly between midle ports
             P_avg = (1 - P0 - M_sum) / (self.N - 1 - layer_index)
 
+            # the output port is the minimum of the average power and the required power
             D[port_index] = min(P_avg, P_sum - M_sum)
+
+            # the lower output port is just the sum of the remaining power            
             D[port_index - 1] = 0
             D[port_index - 1] = 1 - np.sum(D)
 
+            # tune the layer MZI and move on
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
                                         desired_power=D, verbose=verbose)
 
@@ -154,17 +198,30 @@ class TriangleOptimizer(Optimizer):
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
         
+        # loop from top down
         for layer_index in range(self.M//2, self.M):
+
+            # get previous values, powers, and layer
             values_prev = self.mesh.partial_values[layer_index]
             powers_prev = power_vec(values_prev)            
             layer = self.mesh.layers[layer_index]
 
-            index_over = layer_index - self.M//2
-            D = np.zeros((self.N, 1))
-            D[index_over] = P[index_over] 
-            P_in = np.sum(powers_prev[index_over:index_over+2])
-            D[index_over+1] = P_in - P[index_over]
+            # computes the port index
+            port_index = layer_index - self.M//2
 
+            # desired powers.
+            D = np.zeros((self.N, 1))
+
+            # we know the desired power of this port is just the target
+            D[port_index] = P[port_index] 
+
+            # the sum of powers into this MZI
+            P_in = np.sum(powers_prev[port_index:port_index+2])
+
+            # the other port target power should just be the remaining power
+            D[port_index+1] = P_in - P[port_index]
+
+            # tune the layer and move on
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
                                         desired_power=D, verbose=verbose)
 
@@ -172,8 +229,10 @@ class TriangleOptimizer(Optimizer):
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
 
+    """
     @staticmethod
     def construct_coupling_estimate(N, a=0.5):
+        # not needed right now
         Z = np.zeros((N, N))
         Z[0, 0] = 1
         for row_ind in range(1, N-1):
@@ -183,4 +242,4 @@ class TriangleOptimizer(Optimizer):
                 Z[row_ind, col_ind] = a**(row_ind - col_ind + 2)
         Z[-1, 1:] = Z[-2, 1:]    
         return Z
-
+    """
