@@ -4,8 +4,9 @@ from DLA_Control import Mesh
 from DLA_Control import TriangleOptimizer
 
 # create a triangular mesh
-N = 10
+N = 20
 mesh = Mesh(N, mesh_type='triangular', initialization='random', M=None)
+print(mesh)
 
 # comlex valued input coupling vector
 input_values = np.zeros((N,1))

@@ -12,7 +12,6 @@ class Optimizer:
         self.output_target = normalize_vec(output_target)
         self.N = mesh.N
         self.M = mesh.M
-        print(mesh)
 
     def optimizer(self):
         pass
