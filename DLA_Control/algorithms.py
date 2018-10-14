@@ -8,13 +8,16 @@ from DLA_Control import Layer, MZI
 class Optimizer:
 
     def __init__(self, mesh, input_values, output_target):
+
+        # initialization for both Triangular and Clements Mesh
+
         self.mesh = mesh
         self.input_values = normalize_vec(input_values)
         self.output_target = normalize_vec(output_target)
         self.N = mesh.N
         self.M = mesh.M
 
-    def optimizer(self):
+    def optimize(self):
         pass
 
     @staticmethod
@@ -63,12 +66,46 @@ class Optimizer:
         return new_layer
 
 
+class ClementsOptimizer(Optimizer):
+
+
+    def optimize(self, algorithm='basic', verbose=False):
+
+        self.MSE_list = []
+        self.mesh.input_couple(self.input_values)
+
+        if algorithm == 'basic':
+            self.optimize_basic(verbose=verbose)
+        else:
+            raise ValueError('algorithm "{}" not recognized'.format(algorithm))
+
+    def optimize_basic(self, verbose=False):
+        # optimizes a clements mesh by attempting to get close to target each layer
+
+        # loop through layers
+        for layer_index in range(self.M):
+
+            # get previous powers and layer
+            values_prev = self.mesh.partial_values[layer_index]        
+            layer = self.mesh.layers[layer_index]
+
+            # desired output powers = target outputs
+            D = self.output_target
+            
+            new_layer = self.tune_layer(L=layer, input_values=values_prev,
+                                        desired_power=D, verbose=verbose)
+
+            # insert into the mesh and recompute / recouple
+            self.mesh.layers[layer_index] = new_layer
+            self.mesh.recompute_matrices()
+            self.mesh.input_couple(self.input_values)
+
+
 class TriangleOptimizer(Optimizer):
 
 
     def optimize(self, algorithm='up_down', verbose=False):
 
-        self.MSE_list = []
         self.mesh.input_couple(self.input_values)
 
         if algorithm == 'up_down':

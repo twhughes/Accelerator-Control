@@ -9,7 +9,7 @@ import matplotlib.pylab as plt
 from DLA_Control.utils import power_tot, power_vec, normalize_vec
 
 from DLA_Control import Mesh
-from DLA_Control import TriangleOptimizer
+from DLA_Control import TriangleOptimizer, ClementsOptimizer
 
 class TestCoupling(unittest.TestCase):
     """ Code for testing the MZI controllers"""
@@ -79,6 +79,22 @@ class TestCoupling(unittest.TestCase):
         self.assertLess(error, EPSILON)
 
 
+    def test_clements(self):
+        N = self.N
+        mesh = Mesh(N, mesh_type='clements', initialization='random', M=None)
+
+        input_values = self.bot
+        input_values = npr.random((N,1))        
+        output_target = self.one
+
+        CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
+        CO.optimize(algorithm='basic')
+
+        ax = mesh.plot_powers()
+        plt.show()
+        self.check_power(mesh, output_target)
+
+"""
 #### VARIOUS INPUTS TO UNIFORM OUTPUTS ####
 
     def test_updown_1_1(self):
@@ -898,7 +914,7 @@ class TestCoupling(unittest.TestCase):
             mesh.plot_powers(ax=ax_list4[4])
 
         self.check_power(mesh, output_target)
-
+"""
 if __name__ == '__main__':
     plots = False
     N_plots = 25

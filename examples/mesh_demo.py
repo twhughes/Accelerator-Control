@@ -71,4 +71,6 @@ input_values[N//2] = 1
 mesh.input_couple(input_values)
 
 # and plot the results
-mesh.plot_powers()
+ax = mesh.plot_powers()
+plt.show()
+
