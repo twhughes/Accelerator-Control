@@ -57,7 +57,8 @@ class Layer:
 
     def __init__(self, N):
         self.N = N
-        self.mzis = self.N*[None]
+        self.mzis = self.N*[None]   # for printing only
+        self.mzi_map = {}           # maps offset to mzi object
         self.M = np.eye(self.N, dtype=np.complex64)  # make sparse later?
 
     def get_layer_string(self):
@@ -82,6 +83,7 @@ class Layer:
         """ offset of 0 means MZI connecting top two waveguides, max offset = N - 2 """
         self.M[offset:offset + 2, offset:offset + 2] = mzi.M
         self.mzis[offset] = mzi
+        self.mzi_map[offset] = mzi
         self.mzis[offset+1] = 'skip'
 
     def reset_MZI(self, offset, phi1, phi2):
@@ -138,12 +140,19 @@ class Mesh:
             display_string += ''.join(port_string) + '\n'
         return display_string
 
-    def add_layer(self, L):
+    def append_layer(self, L):
         """ Adds a new layer to the mesh and computes the partial matrices"""
         self.layers.append(L)
-        new_partial_M = np.dot(self.partial_matrices[-1], L.M)
+        new_partial_M = np.dot(L.M, self.partial_matrices[-1])
         self.partial_matrices.append(new_partial_M)
         self.full_matrix = self.partial_matrices[-1]
+
+    def recompute_matrices(self):
+        self.partial_matrices = [np.eye(self.N, dtype=np.complex64)]        
+        for L in self.layers:
+            new_partial_M = np.dot(L.M, self.partial_matrices[-1])
+            self.partial_matrices.append(new_partial_M)
+        self.full_matrix = self.partial_matrices[-1]            
 
     def construct_mesh(self):
         """ Makes the mesh """
@@ -163,7 +172,7 @@ class Mesh:
                     else:
                         mzi = MZI(0, 0)
                     L.embed_MZI(mzi, offset=port_index)
-                self.add_layer(L)
+                self.append_layer(L)
 
         elif self.mesh_type == 'triangular':
             for port_index in range(self.N-2, 0, -1):
@@ -173,7 +182,7 @@ class Mesh:
                 else:
                     mzi = MZI(0, 0)
                 L.embed_MZI(mzi, offset=port_index)
-                self.add_layer(L)
+                self.append_layer(L)
             for port_index in range(self.N-1):
                 L = Layer(self.N)
                 if self.initialization == 'random':
@@ -181,7 +190,7 @@ class Mesh:
                 else:
                     mzi = MZI(0, 0)                
                 L.embed_MZI(mzi, offset=port_index)
-                self.add_layer(L)
+                self.append_layer(L)
 
     def input_couple(self, input_values):
         """ Specify input coupling (complex) values to mesh.
@@ -208,7 +217,7 @@ class Mesh:
             raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
         power_im = np.zeros((self.N, self.M+1))
         for layer_index in range(0, self.M+1):
-            power_im[:, layer_index] = self.get_layer_powers(layer_index)
+            power_im[:, layer_index] = self.get_layer_powers(layer_index)[:,0]
         plt.xlabel('layer index')
         plt.ylabel('port index')        
         plt.imshow(power_im, cmap='magma')
