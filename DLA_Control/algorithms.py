@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.linalg import solve, pinv
 import scipy.optimize
-
+# from progressbar import ProgressBar
 from DLA_Control.utils import power_tot, power_vec, normalize_vec, normalize_pow, MSE
 from DLA_Control import Layer, MZI
 
@@ -68,7 +68,6 @@ class Optimizer:
 
 class ClementsOptimizer(Optimizer):
 
-
     def optimize(self, algorithm='basic', verbose=False):
 
         self.MSE_list = []
@@ -82,8 +81,18 @@ class ClementsOptimizer(Optimizer):
     def optimize_basic(self, verbose=False):
         # optimizes a clements mesh by attempting to get close to target each layer
 
+        """ BASIC IDEA:
+                Go through each layer from left to right.
+                At each step, try to get the power output of this layer equal to the 
+                eventual target output.
+                Once the optimization gives up, move to the next layer.
+        """   
+
         # loop through layers
-        for layer_index in reversed(range(self.M)):
+        # bar = ProgressBar(max_value=self.M)
+        for layer_index in range(self.M):
+            print('working on layer {} of {}'.format(layer_index, self.M))
+            # bar.update(layer_index)
 
             # get previous powers and layer
             values_prev = self.mesh.partial_values[layer_index]        

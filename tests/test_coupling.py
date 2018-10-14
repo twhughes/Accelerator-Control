@@ -15,7 +15,7 @@ class TestCoupling(unittest.TestCase):
     """ Code for testing the MZI controllers"""
     def setUp(self):
 
-        self.N = 20
+        self.N = 50
         self.mesh_t = Mesh(self.N, mesh_type='triangular', initialization='random', M=None)
         self.mesh_c_r = Mesh(self.N, mesh_type='clements', initialization='random', M=None)
         self.mesh_c_z = Mesh(self.N, mesh_type='clements', initialization='zeros', M=None)
@@ -81,10 +81,10 @@ class TestCoupling(unittest.TestCase):
 
     def test_clements(self):
         N = self.N
-        mesh = Mesh(N, mesh_type='clements', initialization='random', M=None)
+        mesh = Mesh(N, mesh_type='clements', initialization='random', M=100)
 
         input_values = self.bot
-        input_values = npr.random((N,1))        
+        input_values = npr.random((N, 1))
         output_target = self.one
 
         CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
