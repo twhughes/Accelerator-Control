@@ -13,7 +13,7 @@ class TestCoupling(unittest.TestCase):
     """ Code for testing the MZI controllers"""
     def setUp(self):
 
-        self.N = 8
+        self.N = 4
         self.mesh_t = Mesh(self.N, mesh_type='triangular', initialization='random', M=None)
         self.mesh_c_r = Mesh(self.N, mesh_type='clements', initialization='random', M=None)
         self.mesh_c_z = Mesh(self.N, mesh_type='clements', initialization='zeros', M=None)
@@ -61,14 +61,21 @@ class TestCoupling(unittest.TestCase):
             assert_array_compare(operator.__ne__, input_values, output_values)
 
     def test_optimize_triangular(self):
+        N = 4
 
-        input_values = np.zeros((self.N,1))
+        input_values = np.zeros((N,1))
         input_values[-1] = 1
+        input_values = npr.random((N,1))
 
-        output_target = np.ones((self.N,1))/self.N
+        output_target = np.ones((N,1))
+        output_target = np.zeros((self.N,1))
+        output_target[0] = 1
+        mesh = Mesh(N, mesh_type='triangular', initialization='random', M=None)
 
-        TO = TriangleOptimizer(self.mesh_t, input_values=input_values, output_target=output_target)
-        TO.optimize(algorithm='top_down')
+        TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
+        TO.optimize(algorithm='spread')
+
+        mesh.plot_powers(scale='linear')
 
 if __name__ == '__main__':
     unittest.main()

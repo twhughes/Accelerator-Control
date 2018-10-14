@@ -1,16 +1,18 @@
 import numpy as np
+import numpy.random as npr
 
 from DLA_Control import Mesh
 from DLA_Control import TriangleOptimizer
 
 # create a triangular mesh
-N = 20
+N = 10
 mesh = Mesh(N, mesh_type='triangular', initialization='random', M=None)
 print(mesh)
 
 # comlex valued input coupling vector
-input_values = np.zeros((N,1))
+input_values = np.zeros((N, 1))
 input_values[-1] = 1
+input_values = npr.random((N, 1))
 
 # couple light in and look at powers throughout mesh
 print('before optimizing')
@@ -24,7 +26,7 @@ output_target = np.ones((N,1))
 TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
 
 # optimize the mesh by pushing power to top port and redistributing
-TO.optimize(algorithm='top_down')
+TO.optimize(algorithm='up_down')
 
 # look at powers after optimizing
 print('after optimizing')

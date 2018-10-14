@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import solve, pinv
 import scipy.optimize
 
 from DLA_Control.utils import power_tot, power_vec, normalize_vec, normalize_pow, MSE
@@ -65,19 +66,22 @@ class Optimizer:
 class TriangleOptimizer(Optimizer):
 
 
-    def optimize(self, algorithm='top_down'):
-
-        if algorithm == 'top_down':
-            self.optimize_top_down()
-
-
-    def optimize_top_down(self):
-        # optimizes a triangular mesh by pushing power to the top port first
+    def optimize(self, algorithm='up_down', verbose=False):
 
         self.MSE_list = []
         self.mesh.input_couple(self.input_values)
 
-        # loop through layers
+        if algorithm == 'up_down':
+            self.optimize_top_down(verbose=verbose)
+        elif algorithm == 'spread':
+            self.optimize_spread(verbose=verbose)
+        else:
+            raise ValueError('algorithm "{}" not recognized'.format(algorithm))
+
+    def optimize_top_down(self, verbose=False):
+        # optimizes a triangular mesh by pushing power to the top port first
+
+        # loop from layers bottom to top
         for layer_index in range(self.M//2):
 
             values_prev = self.mesh.partial_values[layer_index]
@@ -86,12 +90,13 @@ class TriangleOptimizer(Optimizer):
             desired_out_power[self.N-layer_index-2] = 1
 
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
-                                        desired_power=desired_out_power, verbose=False)
+                                        desired_power=desired_out_power, verbose=verbose)
 
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
         
+        # loop from top to bottom        
         for layer_index in range(self.M//2, self.M):
             values_prev = self.mesh.partial_values[layer_index]
             layer = self.mesh.layers[layer_index]
@@ -104,9 +109,76 @@ class TriangleOptimizer(Optimizer):
             desired_out_power[index_over+1] = 1-np.sum(output_target_pow[:index_over+1])
 
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
-                                        desired_power=desired_out_power, verbose=False)
+                                        desired_power=desired_out_power, verbose=verbose)
 
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
+
+
+    def optimize_spread(self, verbose=False):
+        # NEEDS WORK!
+        # optimizes a triangular mesh by spreading power when possible
+
+        # z is the projected coupling from each measuring point to each output
+        output_target_pow = power_vec(self.output_target)
+        P0 = output_target_pow[0]
+
+        # loop through layers
+        for layer_index in range(self.M//2):
+
+            values_prev = self.mesh.partial_values[layer_index]
+            powers_prev = power_vec(values_prev)
+            layer = self.mesh.layers[layer_index]
+
+            port_index = self.N - layer_index - 1
+            print('layer: ', layer_index)
+            print('port: ', port_index)
+            print('pos: ', port_index-1, self.N-1)
+            print('neg: ', port_index+1, self.N-1)
+
+            P_req = np.sum(output_target_pow[port_index-1:self.N-1])
+            P_req -= np.sum(powers_prev[port_index+1:self.N-1])
+            print(np.sum(powers_prev[port_index+1:self.N-1]))
+            m_layer = min(P_req, (1-P0)/(self.N-1))
+            desired_out_power = powers_prev
+            desired_out_power[self.N-layer_index-1] = m_layer
+            desired_out_power[self.N-layer_index-2] =  np.sum(powers_prev) - m_layer
+
+            new_layer = self.tune_layer(L=layer, input_values=values_prev,
+                                        desired_power=desired_out_power, verbose=verbose)
+
+            self.mesh.layers[layer_index] = new_layer
+            self.mesh.recompute_matrices()
+            self.mesh.input_couple(self.input_values)
+        
+        desired_out_power = output_target_pow
+        for layer_index in range(self.M//2, self.M):
+            values_prev = self.mesh.partial_values[layer_index]
+            powers_prev = power_vec(values_prev)            
+            layer = self.mesh.layers[layer_index]
+
+            index_over = layer_index - self.M//2
+            desired_out_power = np.zeros((self.N, 1))            
+            desired_out_power[index_over] = output_target_pow[index_over]
+            desired_out_power[index_over+1] = 1-np.sum(output_target_pow[:index_over+1])
+
+            new_layer = self.tune_layer(L=layer, input_values=values_prev,
+                                        desired_power=desired_out_power, verbose=verbose)
+
+            self.mesh.layers[layer_index] = new_layer
+            self.mesh.recompute_matrices()
+            self.mesh.input_couple(self.input_values)
+
+    @staticmethod
+    def construct_coupling_estimate(N, a=0.5):
+        Z = np.zeros((N, N))
+        Z[0, 0] = 1
+        for row_ind in range(1, N-1):
+            Z[row_ind, 1] = a**(row_ind)
+        for col_ind in range(2, N):
+            for row_ind in range(col_ind - 1, N-1):
+                Z[row_ind, col_ind] = a**(row_ind - col_ind + 2)
+        Z[-1, 1:] = Z[-2, 1:]    
+        return Z
 

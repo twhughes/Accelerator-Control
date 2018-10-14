@@ -211,7 +211,7 @@ class Mesh:
         partial_values = self.partial_values[layer_index]
         return power_vec(partial_values)
 
-    def plot_powers(self):
+    def plot_powers(self, scale='linear'):
         # plots the powers throughout the mesh (must have run mesh.input_couple() first)
         if not self.coupled:
             raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
@@ -219,9 +219,13 @@ class Mesh:
         for layer_index in range(0, self.M+1):
             power_im[:, layer_index] = self.get_layer_powers(layer_index)[:,0]
         plt.xlabel('layer index')
-        plt.ylabel('port index')        
-        plt.imshow(power_im, cmap='magma')
-        plt.title('power in each layer')
-        plt.colorbar()
+        plt.ylabel('port index') 
+        if scale == 'linear':
+            im = plt.imshow(power_im, cmap='magma')
+            plt.title('power in each layer')
+        elif scale == 'log':
+            im = plt.imshow(np.log(power_im), cmap='magma')
+            plt.title('log(power) in each layer')        
+        plt.colorbar(im, fraction=0.027, pad=0.04)
         plt.show()
 
