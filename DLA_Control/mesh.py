@@ -119,9 +119,10 @@ class Mesh:
         else:
             raise ValueError("'mesh_type' must be one of {'clements','triangular'}")
 
-
         # set up the matrices
+        # full transfer matrix for the mesh
         self.full_matrix = np.eye(N, dtype=np.complex64)
+        # list of partial transfer matrices (partial_matrices[i] is the transfer matrix UP TO the ith layer)
         self.partial_matrices = [np.eye(N, dtype=np.complex64)]
 
         # construct the mesh
@@ -141,18 +142,19 @@ class Mesh:
         return display_string
 
     def append_layer(self, L):
-        """ Adds a new layer to the mesh and computes the partial matrices"""
+        """ Adds a new layer to the mesh and adds to the list of partial matrices"""
         self.layers.append(L)
         new_partial_M = np.dot(L.M, self.partial_matrices[-1])
         self.partial_matrices.append(new_partial_M)
         self.full_matrix = self.partial_matrices[-1]
 
     def recompute_matrices(self):
-        self.partial_matrices = [np.eye(self.N, dtype=np.complex64)]        
+        """ Computes all of the partial matrices (and full matrix) """
+        self.partial_matrices = [np.eye(self.N, dtype=np.complex64)]
         for L in self.layers:
             new_partial_M = np.dot(L.M, self.partial_matrices[-1])
             self.partial_matrices.append(new_partial_M)
-        self.full_matrix = self.partial_matrices[-1]            
+        self.full_matrix = self.partial_matrices[-1]
 
     def construct_mesh(self):
         """ Makes the mesh """
@@ -224,8 +226,8 @@ class Mesh:
             power_im[:, layer_index] = self.get_layer_powers(layer_index)[:,0]
 
         ax.set_xlabel('layer index')
-        ax.set_ylabel('port index') 
+        ax.set_ylabel('port index')
         im = ax.imshow(power_im, cmap='magma')
-        ax.set_title('power in each layer')       
+        ax.set_title('power in each layer')
         plt.colorbar(im, ax=ax, fraction=0.027, pad=0.04)
         return ax

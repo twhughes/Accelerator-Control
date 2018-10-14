@@ -94,7 +94,6 @@ class TestCoupling(unittest.TestCase):
         plt.show()
         self.check_power(mesh, output_target)
 
-"""
 #### VARIOUS INPUTS TO UNIFORM OUTPUTS ####
 
     def test_updown_1_1(self):
@@ -108,9 +107,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
         
-        if plots:
-            mesh.plot_powers(ax=ax_list0[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_bot_1(self):
@@ -124,9 +121,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_mid_1(self):
@@ -140,9 +135,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_top_1(self):
@@ -156,9 +149,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_rand_1(self):
@@ -172,9 +163,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO BOTTOM OUTPUTS ####
@@ -190,9 +179,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_bot_bot(self):
@@ -206,9 +193,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_mid_bot(self):
@@ -222,9 +207,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_top_bot(self):
@@ -238,9 +221,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_rand_bot(self):
@@ -254,9 +235,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO MIDDLE OUTPUTS ####
@@ -272,9 +251,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_bot_mid(self):
@@ -288,9 +265,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_mid_mid(self):
@@ -304,9 +279,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_top_mid(self):
@@ -320,9 +293,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_rand_mid(self):
@@ -336,9 +307,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO TOP OUTPUTS ####
@@ -354,9 +323,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_bot_top(self):
@@ -370,9 +337,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_mid_top(self):
@@ -386,9 +351,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_top_top(self):
@@ -402,9 +365,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_rand_top(self):
@@ -418,9 +379,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO RANDOM OUTPUTS ####
@@ -436,9 +395,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_bot_rand(self):
@@ -452,9 +409,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_mid_rand(self):
@@ -468,9 +423,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_top_rand(self):
@@ -484,9 +437,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_updown_rand_rand(self):
@@ -500,9 +451,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='up_down')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO UNIFORM OUTPUTS ####
@@ -518,9 +467,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
         
-        if plots:
-            mesh.plot_powers(ax=ax_list0[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_bot_1(self):
@@ -534,9 +481,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_mid_1(self):
@@ -550,9 +495,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_top_1(self):
@@ -566,9 +509,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_rand_1(self):
@@ -582,9 +523,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list0[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO BOTTOM OUTPUTS ####
@@ -600,9 +539,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_bot_bot(self):
@@ -616,9 +553,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_mid_bot(self):
@@ -632,9 +567,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_top_bot(self):
@@ -648,9 +581,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_rand_bot(self):
@@ -664,9 +595,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list1[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO MIDDLE OUTPUTS ####
@@ -682,9 +611,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_bot_mid(self):
@@ -698,9 +625,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_mid_mid(self):
@@ -714,9 +639,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_top_mid(self):
@@ -730,9 +653,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_rand_mid(self):
@@ -746,9 +667,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list2[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO TOP OUTPUTS ####
@@ -764,9 +683,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_bot_top(self):
@@ -780,9 +697,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_mid_top(self):
@@ -796,9 +711,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_top_top(self):
@@ -812,9 +725,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_rand_top(self):
@@ -828,9 +739,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list3[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO RANDOM OUTPUTS ####
@@ -846,9 +755,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[0])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_bot_rand(self):
@@ -862,9 +769,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[1])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_mid_rand(self):
@@ -878,9 +783,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[2])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_top_rand(self):
@@ -894,9 +797,7 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[3])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
 
     def test_spread_rand_rand(self):
@@ -910,22 +811,8 @@ class TestCoupling(unittest.TestCase):
         TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
         TO.optimize(algorithm='spread')
 
-        if plots:
-            mesh.plot_powers(ax=ax_list4[4])
-
+        # mesh.plot_powers(); plt.show()
         self.check_power(mesh, output_target)
-"""
+
 if __name__ == '__main__':
-    plots = False
-    N_plots = 25
-
-    if plots:
-        f0, ax_list0 = plt.subplots(5, constrained_layout=True)
-        f1, ax_list1 = plt.subplots(5, constrained_layout=True)
-        f2, ax_list2 = plt.subplots(5, constrained_layout=True)
-        f3, ax_list3 = plt.subplots(5, constrained_layout=True)
-        f4, ax_list4 = plt.subplots(5, constrained_layout=True)
-
     unittest.main()
-    plt.show()  # need to run in interactive mode and then plt.show()
-
