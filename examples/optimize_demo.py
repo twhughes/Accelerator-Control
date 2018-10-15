@@ -5,6 +5,9 @@ import matplotlib.pylab as plt
 from DLA_Control import Mesh
 from DLA_Control import TriangleOptimizer, ClementsOptimizer
 
+
+""" FIRST OPTIMIZE A TRIANGULAR MESH """
+
 # create a triangular mesh
 N = 10
 mesh = Mesh(N, mesh_type='triangular', initialization='random', M=None)
@@ -29,15 +32,21 @@ output_target = np.ones((N,1))
 TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
 
 # optimize the mesh by pushing power to top port and redistributing
-TO.optimize(algorithm='up_down')
+# TO.optimize(algorithm='up_down')
+
+# can also try the 'spread' algorithm, which distributes power as much as possible
+TO.optimize(algorithm='spread')
 
 # look at powers after optimizing
 mesh.plot_powers(ax=ax2)
 ax2.set_title('power distribution after optimizing')
 
+
+""" NEXT OPTIMIZE A CLEMENTS MESH """
+
 # create a clements mesh
-N = 10
-mesh = Mesh(N, mesh_type='clements', initialization='random', M=20)
+N = 20
+mesh = Mesh(N, mesh_type='clements', initialization='random', M=50)
 print(mesh)
 
 # comlex valued input coupling vector
@@ -53,7 +62,8 @@ mesh.plot_powers(ax=ax3)
 ax3.set_title('power distribution before optimizing')
 
 # target output complex amplitude
-output_target = np.ones((N, 1))
+output_target = np.zeros((N, 1))
+output_target[N//2] = 1
 
 # define an optimizer over the triangular mesh
 CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
@@ -64,4 +74,11 @@ CO.optimize(algorithm='basic')
 # look at powers after optimizing
 mesh.plot_powers(ax=ax4)
 ax4.set_title('power distribution after optimizing')
+plt.show()
+
+f2.clf()
+plt.clf()
+for li in range(N):
+    plt.plot(mesh.get_layer_powers(layer_index=li))
+
 plt.show()
