@@ -212,22 +212,3 @@ class Mesh:
             raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
         partial_values = self.partial_values[layer_index]
         return power_vec(partial_values)
-
-    def plot_powers(self, ax=None):
-        # plots the powers throughout the mesh (must have run mesh.input_couple() first)
-        if not self.coupled:
-            raise ValueError("must run `Mesh.input_couple(input_values)` before getting layer powers")
-
-        if ax is None:
-            fig, ax = plt.subplots(1, constrained_layout=True)
-
-        power_im = np.zeros((self.N, self.M+1))
-        for layer_index in range(0, self.M+1):
-            power_im[:, layer_index] = self.get_layer_powers(layer_index)[:,0]
-
-        ax.set_xlabel('layer index')
-        ax.set_ylabel('port index')
-        im = ax.imshow(power_im, cmap='magma')
-        ax.set_title('power in each layer')
-        plt.colorbar(im, ax=ax, fraction=0.027, pad=0.04)
-        return ax

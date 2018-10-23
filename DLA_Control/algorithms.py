@@ -24,6 +24,8 @@ class Optimizer:
     def tune_layer(L, input_values, desired_power, verbose=False):
         # tunes a single layer to aceive the desired output power
 
+        desired_power = np.reshape(desired_power, (-1,1))
+
         # offset_map[i] gives the offset of the ith MZI
         offset_map = []
         phi_list = []
@@ -55,7 +57,6 @@ class Optimizer:
             matrix = L.M
             out_values = np.dot(matrix, input_values)
             out_power = power_vec(out_values)
-
             # return MSE with desired
             return MSE(out_power, desired_power)
 
@@ -75,6 +76,8 @@ class ClementsOptimizer(Optimizer):
 
         if algorithm == 'basic':
             self.optimize_basic(verbose=verbose)
+        elif algorithm == 'smart':
+            self.optimize_smart(verbose=verbose)            
         else:
             raise ValueError('algorithm "{}" not recognized'.format(algorithm))
 
@@ -83,28 +86,114 @@ class ClementsOptimizer(Optimizer):
 
         """ BASIC IDEA:
                 Go through each layer from left to right.
-                At each step, try to get the power output of this layer equal to the 
+                At each step, try to get the power output of this layer equal to the
                 eventual target output.
                 Once the optimization gives up, move to the next layer.
-        """   
+        """
 
         # loop through layers
         # bar = ProgressBar(max_value=self.M)
         for layer_index in range(self.M):
-            print('working on layer {} of {}'.format(layer_index, self.M))
+            if verbose:
+                print('working on layer {} of {}'.format(layer_index, self.M))
             # bar.update(layer_index)
 
             # get previous powers and layer
-            values_prev = self.mesh.partial_values[layer_index]        
+            values_prev = self.mesh.partial_values[layer_index]
             layer = self.mesh.layers[layer_index]
 
             # desired output powers = target outputs
-            D = self.output_target
-            
+            D = power_vec(self.output_target)
+
             new_layer = self.tune_layer(L=layer, input_values=values_prev,
                                         desired_power=D, verbose=verbose)
 
             # insert into the mesh and recompute / recouple
+            self.mesh.layers[layer_index] = new_layer
+            self.mesh.recompute_matrices()
+            self.mesh.input_couple(self.input_values)
+
+
+    def optimize_smart(self, verbose=False):
+        # optimizes a clements mesh by attempting to get close to target each layer
+
+        """ BASIC IDEA:
+                Go through each layer from left to right.
+                At each MZI in the layer, push as much power up or down depending on what is needed and supplied.
+        """
+
+        # powers needed above and below each port
+        P = power_vec(self.output_target)
+        Ps_up = np.zeros((self.N,))
+        Ps_down = np.zeros((self.N,))
+        for port_index in range(self.N):
+            Ps_up[port_index] = np.sum(P[:port_index+1])
+            Ps_down[port_index] = np.sum(P[port_index+1:])
+
+        # loop through layers
+        # bar = ProgressBar(max_value=self.M)
+        for layer_index in range(self.M):
+            if verbose:
+                print('working on layer {} of {}'.format(layer_index, self.M))
+            # bar.update(layer_index)
+
+            # get previous powers and layer
+            values_prev = self.mesh.partial_values[layer_index]
+            powers_prev = power_vec(values_prev)
+
+            Ins_up = np.zeros((self.N,))
+            Ins_down = np.zeros((self.N,))
+            for port_index in range(self.N):
+                Ins_up[port_index] = np.sum(powers_prev[:port_index])
+                Ins_down[port_index] = np.sum(powers_prev[port_index+2:])
+
+            layer = self.mesh.layers[layer_index]
+
+            # desired output powers = target outputs
+            D = np.zeros((self.N,))
+            if layer_index % 2 == 0:
+                top_port_indeces = range(0, self.N, 2)
+            else:
+                top_port_indeces = range(1, self.N-1, 2)
+
+            for top_port_index in top_port_indeces:
+                I_top = powers_prev[top_port_index, 0]
+                I_bot = powers_prev[top_port_index+1, 0]
+                P_in_MZI = I_top + I_bot
+
+                P_up = Ps_up[top_port_index]
+                P_down = Ps_down[top_port_index]
+                I_up = Ins_up[top_port_index]
+                I_down = Ins_down[top_port_index]
+
+                P_needed_up = P_up - I_up
+                P_needed_down = P_down - I_down
+
+                if P_up > (I_up + P_in_MZI):
+                    # more power needed in top ports than can be supplied now
+                    # push all up
+                    D[top_port_index] = P_in_MZI
+                    D[top_port_index + 1] = 0
+                elif P_up > I_up:
+                    # power needed in top ports but not so more than suppliable by MZI
+                    # push needed up                    
+                    D[top_port_index] = P_up - I_up
+                    D[top_port_index + 1] = P_in_MZI - D[top_port_index]
+                elif P_down > (I_down + P_in_MZI):
+                    # more power needed in bottom ports than can be supplied now
+                    # push all down
+                    D[top_port_index + 1] = P_in_MZI
+                    D[top_port_index] = 0
+                elif P_down > I_down:
+                    # power needed in bottom ports but not so more than suppliable by MZI
+                    # push needed down, rest up
+                    D[top_port_index + 1] = P_down - I_down
+                    D[top_port_index] = P_in_MZI - D[top_port_index + 1]
+
+            new_layer = self.tune_layer(L=layer, input_values=values_prev,
+                                        desired_power=D, verbose=verbose)
+
+            # # insert into the mesh and recompute / recouple
             self.mesh.layers[layer_index] = new_layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)

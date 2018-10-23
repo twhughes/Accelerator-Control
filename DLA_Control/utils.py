@@ -16,4 +16,4 @@ def normalize_pow(vector):
     return vector / np.sum(vector)
 
 def MSE(vector1, vector2):
-    return np.sum(np.square(vector1[:] - vector2[:]))/vector1.size
+    return np.sum(np.square(vector1 - vector2))/vector1.size
