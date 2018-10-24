@@ -64,9 +64,22 @@ Clements Optimizers contain `smart` and `basic` algorithms.
 
 Read more about these in `DLA_Control/algorithms.py` or see `examples/optmize_demo.py` for more examples.
 
+#### Plotting
+
+`plots.py` defines a few plotting functions.
+
+To plot the progression of power within the device:
+
+    im = plot_powers(mesh, ax=None)
+
+To make a 3D bar plot of the same image (note, not beautified)
+
+    plot_bar_3d(power_map, ax=None)
+
+
 #### Other
 
-`plots.py` and `utils.py` contain helper functions
+`utils.py` contains helper functions for normalizing vectors and getting powers from complex mode amplitudes.
 
 ### Tests
 
