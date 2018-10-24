@@ -1,7 +1,9 @@
 import numpy as np
+import matplotlib.pylab as plt
 
 from DLA_Control import Mesh
 from DLA_Control.utils import normalize_vec
+from DLA_Control.plots import plot_powers
 
 # simple demo of mesh creation and manipulation
 
@@ -13,8 +15,8 @@ print(mesh)
 print('')
 
 # then, a full clements mesh
-mesh = Mesh(N, mesh_type='clements', initialization='random', M=None)
-print('Clements, N = {}, M = None:'.format(N))
+mesh = Mesh(N, mesh_type='clements', initialization='random', M=8)
+print('Clements, N = {}, M = 8:'.format(N))
 print(mesh)
 print('')
 
@@ -65,12 +67,12 @@ print('')
 N = 50
 mesh = Mesh(N, mesh_type='clements', initialization='random', M=None)
 
-input_values = np.zeros((N,))
+input_values = np.zeros((N,1))
 input_values[N//2] = 1
 
 mesh.input_couple(input_values)
 
 # and plot the results
-ax = mesh.plot_powers()
+im = plot_powers(mesh)
 plt.show()
 
