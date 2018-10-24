@@ -15,8 +15,8 @@ print(mesh)
 print('')
 
 # then, a full clements mesh
-mesh = Mesh(N, mesh_type='clements', initialization='random', M=8)
-print('Clements, N = {}, M = 8:'.format(N))
+mesh = Mesh(N, mesh_type='clements', initialization='random', M=None)
+print('Clements, N = {}, M = None:'.format(N))
 print(mesh)
 print('')
 
