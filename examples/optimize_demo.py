@@ -47,7 +47,7 @@ ax2.set_title('power distribution after optimizing')
 """ NEXT OPTIMIZE A CLEMENTS MESH """
 
 # create a clements mesh
-N = 5
+N = 10
 M = 5
 mesh = Mesh(N, mesh_type='clements', initialization='random', M=M)
 print(mesh)
