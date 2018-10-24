@@ -152,7 +152,7 @@ class ClementsOptimizer(Optimizer):
             # desired output powers = target outputs
             D = np.zeros((self.N,))
             if layer_index % 2 == 0:
-                top_port_indeces = range(0, self.N, 2)
+                top_port_indeces = range(0, self.N-1, 2)
             else:
                 top_port_indeces = range(1, self.N-1, 2)
 
