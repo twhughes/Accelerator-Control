@@ -3,9 +3,7 @@
 This code is used to simulate an MZI mesh used for phase and amplitude control of a dielectric laser accelerator.
 
 For more information, see [this paper](https://arxiv.org/abs/1709.04441).
-
 ![](img/up_down.png)
-
 ## Code Structure:
 The code is organized as follows
 
@@ -14,10 +12,10 @@ The code is organized as follows
         mesh.py
         plots.py
         util.py
-    examples
+    examples/
         mesh_demo.py
         optimize_demo.py
-    tests
+    tests/
         test_coupling.py
         test_mesh.py
         test_MZI.py
