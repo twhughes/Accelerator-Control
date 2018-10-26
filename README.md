@@ -31,20 +31,26 @@ Currently, `Triangular` and `Clements` meshes are supported.  Printing these Mes
 
 To make a Clements mesh with N ports and M layers and random phase shifter initialization:
     
-    mesh = Mesh(N, mesh_type='clements', initialization='random', M=M)
-    print(mesh)
-
+```python
+mesh = Mesh(N, mesh_type='clements', initialization='random', M=M)
+print(mesh)
+```
+    
 To make a Triangular mesh with N ports and phase shifter initialized with all zeros (transmission):
 
-    mesh = Mesh(N, mesh_type='triangular', initialization='zeros')
-    print(mesh)
+```python
+mesh = Mesh(N, mesh_type='triangular', initialization='zeros')
+print(mesh)
+```
 
 To couple light into the mesh and view the power through the device
     
-    input_values = np.random.random((N,))
-    mesh.input_couple(input_values)
-    im = plot_powers(mesh)
-    plt.show()
+```python
+input_values = np.random.random((N,))
+mesh.input_couple(input_values)
+im = plot_powers(mesh)
+plt.show()
+```
 
 which will generate a plot like this
 
@@ -58,13 +64,17 @@ For each `Clements` and `Triangular` meshes, there is an optimizer class that op
 
 These can be initialized with the input and target (complex-valued) mode amplitudes as
 
-    TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
-    CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
+```python
+TO = TriangleOptimizer(mesh, input_values=input_values, output_target=output_target)
+CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
+```
 
 Then, one can call the `optimize()` method on these optimizers with an algorithm to do the tuning.  For example:
 
-    CO.optimize(algorithm='smart', verbose=False)
-   
+```python
+CO.optimize(algorithm='smart', verbose=False)
+```   
+
 Triangular Optimizers contain `up_down` and `spread` algorithms.  Here's a before and after:
 
 ![](img/traingular.png)
@@ -81,12 +91,15 @@ Read more about these in `DLA_Control/algorithms.py` or see `examples/optmize_de
 
 To plot the progression of power within the device:
 
-    im = plot_powers(mesh, ax=None)
+```python
+im = plot_powers(mesh, ax=None)
+```
 
 To make a 3D bar plot of the same image (note, not beautified)
 
-    plot_bar_3d(power_map, ax=None)
-
+```python
+plot_bar_3d(power_map, ax=None)
+```
 
 #### Other
 
@@ -98,18 +111,26 @@ Tests cover the individual MZIs up to the full meshes and the optimization proto
 
 To test the individual MZI construction:
 
-    python test_MZI.py
- 
+```python
+python test_MZI.py
+```
+
 To test the `Layer` and `Mesh` objects:
 
-    python test_mesh.py
+```python
+python test_mesh.py
+```
 
 To test the optimizers
 
-    python test_coupling.py
-    
+```python
+python test_coupling.py
+```
+
 To run all tests:
 
-    python -m unittest discover tests
-    
+```python
+python -m unittest discover tests
+```
+
 This can take several minutes.
