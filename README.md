@@ -27,6 +27,8 @@ The main package is contained in `DLA_Control`.
 In `mesh.py`you will find `Mesh` objects that define the MZI mesh and contain all of the relevant transfer matrices.
 Currently, `Triangular` and `Clements` meshes are supported.  Printing these Mesh objects prints an ASCII representation of the mesh.
 
+![](img/ASCII.png)
+
 To make a Clements mesh with N ports and M layers and random phase shifter initialization:
     
     mesh = Mesh(N, mesh_type='clements', initialization='random', M=M)
@@ -43,7 +45,11 @@ To couple light into the mesh and view the power through the device
     mesh.input_couple(input_values)
     im = plot_powers(mesh)
     plt.show()
-    
+
+which will generate a plot like this
+
+![](img/pow_spread.png)
+
 For an example see `examples/mesh_demo.py` or the methods of `Mesh` as defined in `DLA_Control/mesh.py`
 
 #### Optimizers
@@ -59,14 +65,32 @@ Then, one can call the `optimize()` method on these optimizers with an algorithm
 
     CO.optimize(algorithm='smart', verbose=False)
    
-Triangular Optimizers contain `up_down` and `spread` algorithms.
+Triangular Optimizers contain `up_down` and `spread` algorithms.  Here's a before and after:
+
+![](img/traingular.png)
+
 Clements Optimizers contain `smart` and `basic` algorithms.
+
+![](img/clements.png)
 
 Read more about these in `DLA_Control/algorithms.py` or see `examples/optmize_demo.py` for more examples.
 
+#### Plotting
+
+`plots.py` defines a few plotting functions.
+
+To plot the progression of power within the device:
+
+    im = plot_powers(mesh, ax=None)
+
+To make a 3D bar plot of the same image (note, not beautified)
+
+    plot_bar_3d(power_map, ax=None)
+
+
 #### Other
 
-`plots.py` and `utils.py` contain helper functions
+`utils.py` contains helper functions for normalizing vectors and getting powers from complex mode amplitudes.
 
 ### Tests
 
