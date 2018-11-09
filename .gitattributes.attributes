@@ -1,0 +1,8 @@
+*.tex linguist-detectable=false
+*.aux linguist-detectable=false
+*.bbl linguist-detectable=false
+*.blg linguist-detectable=false
+*.fdb_latexmk linguist-detectable=false
+*.fls linguist-detectable=false
+*.log linguist-detectable=false
+*.bib linguist-detectable=false
