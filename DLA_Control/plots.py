@@ -1,6 +1,7 @@
 import matplotlib.pylab as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from string import ascii_lowercase
 
 import numpy as np
 
@@ -48,3 +49,27 @@ def colorbar(mappable):
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.05)
     return fig.colorbar(mappable, cax=cax)
+
+def set_axis_font(ax, font_size):
+    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
+             ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(font_size)
+
+def apply_sublabels(axs, invert_color_inds, x=19, y=-5, size='large', ha='right', va='top', prefix='(', postfix=')', weight=None):
+    # axs = list of axes
+    # invert_color_ind = list of booleans (True to make sublabels white, else False)
+    for n, ax in enumerate(axs):
+        if invert_color_inds[n]:
+            color='w'
+        else:
+            color='k'
+        ax.annotate(prefix + ascii_lowercase[n] + postfix,
+                    xy=(1, 1),
+                    xytext=(x, y),
+                    xycoords='axes fraction',
+                    textcoords='offset points',
+                    size=size,
+                    color=color,
+                    horizontalalignment=ha,
+                    verticalalignment=va,
+                    weight=weight)
