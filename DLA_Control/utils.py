@@ -1,5 +1,7 @@
 import numpy as np
 from numpy.linalg import norm
+from functools import wraps
+from time import time
 
 def power_vec(vector):
     return np.square(np.abs(vector))

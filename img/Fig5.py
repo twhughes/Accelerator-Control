@@ -16,22 +16,21 @@ Then computes the MSE at each layer between power and target, averaged over seve
 """
 
 N_avg = 5    # number of inputs to average over
-N_max = 40    # largest clements mesh
-N_list = range(2, N_max)      # list of clements mesh sizes to try
+N_max = 200    # largest clements mesh
+M = N_max
+N_list = range(2, N_max, 20)      # list of clements mesh sizes to try
 tol = 1e-4    # mse tolerance for "converged"
 
 # stores the convergences.
-convergences = np.zeros((N_max, N_max))
+convergences = np.zeros((len(N_list), M))
 
 # for each mesh size
-for N in N_list:
-
-    M = N_max
+for N_index, N in enumerate(N_list):
 
     # construct an NxN clements mesh.
     mesh = Mesh(N, mesh_type='clements', initialization='random', M=M)
     print('N = {} / {}:'.format(N, N_max))
-    print(mesh)
+    # print(mesh)
 
     # uniform output target
     output_target = np.ones((N,))
@@ -49,7 +48,7 @@ for N in N_list:
 
         # make a clements mesh and optimize using the 'smart' algorithm
         CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
-        CO.optimize(algorithm='smart', verbose=False)
+        CO.optimize(algorithm='smart_seq', verbose=False)
 
         # loop through layers of optimized device
         for li in range(M):
@@ -63,11 +62,12 @@ for N in N_list:
             mses[li] += mse/N_avg
 
     # average the MSE sums, add to convergences array
-    convergences[N, :M] = mses
+    convergences[N_index, :M] = mses
 
-im = plt.pcolormesh(range(M), N_list, np.log(convergences[2:]), cmap='magma')
+im = plt.pcolormesh(range(M), N_list, np.log(convergences), cmap='magma')
 im.set_rasterized(True)
 plt.title('log$_{10}$(MSE) betwen layer power and target.')
 plt.xlabel('number of layers')
 plt.ylabel('number of ports')
-plt.savefig('img/layer_powers_tmp.pdf', dpi=300)
+cbar = colorbar(im)
+plt.show()

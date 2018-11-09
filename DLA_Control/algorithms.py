@@ -66,6 +66,32 @@ class Optimizer:
 
         return new_layer
 
+    @staticmethod
+    def tune_mzi(mzi, input_values, desired_power, verbose=False):
+        # tunes a single mzi to aceive the desired output power
+
+        desired_power = np.reshape(desired_power, (-1, 1))
+
+        phis = np.array([mzi.phi1, mzi.phi2])
+
+        def objfn(phis, *args):
+
+            mzi, input_values, desired_power = args
+
+            mzi.phi1 = phis[0]
+            mzi.phi2 = phis[1]
+
+            matrix = mzi.M
+            out_values = np.dot(matrix, input_values)
+            out_power = power_vec(out_values)
+            # return MSE with desired
+            return MSE(out_power, desired_power)
+
+        args = mzi, input_values, desired_power
+        phis_optimal =  scipy.optimize.fmin(objfn, phis, args=args, disp=verbose)
+
+        return mzi
+
 
 class ClementsOptimizer(Optimizer):
 
@@ -78,6 +104,8 @@ class ClementsOptimizer(Optimizer):
             self.optimize_basic(verbose=verbose)
         elif algorithm == 'smart':
             self.optimize_smart(verbose=verbose)            
+        elif algorithm == 'smart_seq':
+            self.optimize_smart_sequential(verbose=verbose)          
         else:
             raise ValueError('algorithm "{}" not recognized'.format(algorithm))
 
@@ -195,6 +223,99 @@ class ClementsOptimizer(Optimizer):
 
             # # insert into the mesh and recompute / recouple
             self.mesh.layers[layer_index] = new_layer
+            self.mesh.recompute_matrices()
+            self.mesh.input_couple(self.input_values)
+
+
+    def optimize_smart_sequential(self, verbose=False):
+        # optimizes a clements mesh by attempting to get close to target each layer
+
+        """ BASIC IDEA:
+                Go through each layer from left to right.
+                At each MZI in the layer, push as much power up or down depending on what is needed and supplied.
+        """
+
+        # powers needed above and below each port
+        P = power_vec(self.output_target)
+        Ps_up = np.zeros((self.N,))
+        Ps_down = np.zeros((self.N,))
+        for port_index in range(self.N):
+            Ps_up[port_index] = np.sum(P[:port_index+1])
+            Ps_down[port_index] = np.sum(P[port_index+1:])
+
+        # loop through layers
+        # bar = ProgressBar(max_value=self.M)
+        for layer_index in range(self.M):
+            if verbose:
+                print('working on layer {} of {}'.format(layer_index, self.M))
+            # bar.update(layer_index)
+
+            # get previous powers and layer
+            values_prev = self.mesh.partial_values[layer_index]
+            powers_prev = power_vec(values_prev)
+
+            Ins_up = np.zeros((self.N,))
+            Ins_down = np.zeros((self.N,))
+            for port_index in range(self.N):
+                Ins_up[port_index] = np.sum(powers_prev[:port_index])
+                Ins_down[port_index] = np.sum(powers_prev[port_index+2:])
+
+            layer = self.mesh.layers[layer_index]
+
+            # desired output powers = target outputs
+            D = np.zeros((self.N,))
+            if layer_index % 2 == 0:
+                top_port_indeces = range(0, self.N-1, 2)
+            else:
+                top_port_indeces = range(1, self.N-1, 2)
+
+            new_mzis = []
+
+            for top_port_index in top_port_indeces:
+                I_top = powers_prev[top_port_index, 0]
+                I_bot = powers_prev[top_port_index+1, 0]
+                P_in_MZI = I_top + I_bot
+
+                P_up = Ps_up[top_port_index]
+                P_down = Ps_down[top_port_index]
+                I_up = Ins_up[top_port_index]
+                I_down = Ins_down[top_port_index]
+
+                P_needed_up = P_up - I_up
+                P_needed_down = P_down - I_down
+
+                if P_up > (I_up + P_in_MZI):
+                    # more power needed in top ports than can be supplied now
+                    # push all up
+                    D[top_port_index] = P_in_MZI
+                    D[top_port_index + 1] = 0
+                elif P_up > I_up:
+                    # power needed in top ports but not so more than suppliable by MZI
+                    # push needed up                    
+                    D[top_port_index] = P_up - I_up
+                    D[top_port_index + 1] = P_in_MZI - D[top_port_index]
+                elif P_down > (I_down + P_in_MZI):
+                    # more power needed in bottom ports than can be supplied now
+                    # push all down
+                    D[top_port_index + 1] = P_in_MZI
+                    D[top_port_index] = 0
+                elif P_down > I_down:
+                    # power needed in bottom ports but not so more than suppliable by MZI
+                    # push needed down, rest up
+                    D[top_port_index + 1] = P_down - I_down
+                    D[top_port_index] = P_in_MZI - D[top_port_index + 1]
+
+
+                old_mzi = layer.mzis[top_port_index]
+                new_mzi = self.tune_mzi(mzi=old_mzi,
+                                        input_values=values_prev[top_port_index:top_port_index+2],
+                                        desired_power=D[top_port_index:top_port_index+2],
+                                        verbose=verbose)
+
+                layer.embed_MZI(new_mzi, top_port_index)
+
+            # # insert into the mesh and recompute / recouple
+            self.mesh.layers[layer_index] = layer
             self.mesh.recompute_matrices()
             self.mesh.input_couple(self.input_values)
 

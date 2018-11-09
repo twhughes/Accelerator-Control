@@ -8,7 +8,7 @@ from DLA_Control import TriangleOptimizer, ClementsOptimizer
 from DLA_Control.plots import plot_bar_3d, colorbar, plot_powers, apply_sublabels
 
 NR = 1
-NC = 6
+NC = 2
 
 fig, (axes) = plt.subplots(nrows=NR, ncols=NC)#, figsize=(8.5, 5))
 
@@ -52,6 +52,6 @@ fig.subplots_adjust(bottom=0.1, top=0.9, left=0.1, right=0.8,
 
 # apply_sublabels(axes.flat, invert_color_inds=NC*NR*[True], x=-2, y=-2, size='large', ha='right', va='top', prefix='', postfix='', weight='bold')
 
-plt.savefig('./img/fig4.pdf')
+# plt.savefig('./img/fig4.pdf')
 plt.show()
 
