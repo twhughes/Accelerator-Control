@@ -6,3 +6,4 @@
 *.fls linguist-detectable=false
 *.log linguist-detectable=false
 *.bib linguist-detectable=false
+Api.elm linguist-generated=true
