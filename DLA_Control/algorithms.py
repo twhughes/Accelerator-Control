@@ -84,6 +84,7 @@ class Optimizer:
             matrix = mzi.M
             out_values = np.dot(matrix, input_values)
             out_power = power_vec(out_values)
+            
             # return MSE with desired
             return MSE(out_power, desired_power)
 
@@ -321,7 +322,6 @@ class ClementsOptimizer(Optimizer):
 
 
 class TriangleOptimizer(Optimizer):
-
 
     def optimize(self, algorithm='up_down', verbose=False):
 

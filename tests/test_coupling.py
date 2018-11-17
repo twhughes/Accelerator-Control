@@ -11,11 +11,14 @@ from DLA_Control.utils import power_tot, power_vec, normalize_vec
 from DLA_Control import Mesh
 from DLA_Control import TriangleOptimizer, ClementsOptimizer
 
+
+EPSILON = 1e-4   # tolerance on MSE between final power output and target
+
 class TestCoupling(unittest.TestCase):
     """ Code for testing the MZI controllers"""
     def setUp(self):
 
-        self.N = 50
+        self.N = 10
         self.mesh_t = Mesh(self.N, mesh_type='triangular', initialization='random', M=None)
         self.mesh_c_r = Mesh(self.N, mesh_type='clements', initialization='random', M=None)
         self.mesh_c_z = Mesh(self.N, mesh_type='clements', initialization='zeros', M=None)
@@ -72,27 +75,10 @@ class TestCoupling(unittest.TestCase):
 
     def check_power(self, mesh, output_target):
         # checks if output equals target
-        EPSILON = 1e-5
         P_out = power_vec(mesh.output_values)
         P_target = power_vec(output_target)
         error = norm(P_out - P_target)/self.N
         self.assertLess(error, EPSILON)
-
-
-    def test_clements(self):
-        N = self.N
-        mesh = Mesh(N, mesh_type='clements', initialization='random', M=100)
-
-        input_values = self.bot
-        input_values = npr.random((N, 1))
-        output_target = self.one
-
-        CO = ClementsOptimizer(mesh, input_values=input_values, output_target=output_target)
-        CO.optimize(algorithm='basic')
-
-        ax = mesh.plot_powers()
-        plt.show()
-        self.check_power(mesh, output_target)
 
 #### VARIOUS INPUTS TO UNIFORM OUTPUTS ####
 

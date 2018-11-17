@@ -88,5 +88,19 @@ class TestMesh(unittest.TestCase):
         M = Mesh(N, mesh_type='clements', initialization='zeros', M=1)
         np.testing.assert_array_almost_equal(M.full_matrix, np.eye(N, dtype=np.complex64))
 
+
+    def test_real(self):
+
+        N = 10
+        mesh = Mesh(N, mesh_type='clements', initialization='real', M=None)
+        print(mesh)
+        R = (np.random.random((N, 1)) - 0.5) #+ 1j*(np.random.random((N, 1)) - 0.5)
+
+        mesh.input_couple(R)
+        output_values = mesh.output_values
+        print(output_values)
+
+
+
 if __name__ == '__main__':
     unittest.main()

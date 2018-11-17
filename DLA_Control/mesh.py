@@ -98,7 +98,7 @@ class Mesh:
         """
             N:  the number of inputs & outputs
             mesh_type:  {'clements','triangular'} the pattern of the MZI in the mesh
-            initialization:  {'random','zeros'} how the mzi phases start
+            initialization:  {'random','zeros','real'} how the mzi phases start
         """
 
         self.N = N
@@ -156,6 +156,19 @@ class Mesh:
             self.partial_matrices.append(new_partial_M)
         self.full_matrix = self.partial_matrices[-1]
 
+    def _mzi_init(self):
+        """ Returns an MZI based on the mesh initialization """
+        if self.initialization == 'random':
+            return MZI()
+        elif self.initialization == 'zeros':
+            return MZI(0, 0)
+        elif self.initialization == 'real':
+            mzi = MZI()
+            mzi.phi1 = 0
+            return mzi
+        else:
+            raise ValueError("incorrect initialization, must be one of 'random','zeros','real', given {}".format(initialization))
+
     def construct_mesh(self):
         """ Makes the mesh """
         if self.mesh_type == 'clements':
@@ -169,28 +182,19 @@ class Mesh:
                     else:
                         port_indeces = range(1, self.N, 2)                        
                 for port_index in port_indeces:
-                    if self.initialization == 'random':
-                        mzi = MZI()   # random MZI
-                    else:
-                        mzi = MZI(0, 0)
+                    mzi = self._mzi_init()
                     L.embed_MZI(mzi, offset=port_index)
                 self.append_layer(L)
 
         elif self.mesh_type == 'triangular':
             for port_index in range(self.N-2, 0, -1):
                 L = Layer(self.N)
-                if self.initialization == 'random':
-                    mzi = MZI()   # random MZI
-                else:
-                    mzi = MZI(0, 0)
+                mzi = self._mzi_init()
                 L.embed_MZI(mzi, offset=port_index)
                 self.append_layer(L)
             for port_index in range(self.N-1):
                 L = Layer(self.N)
-                if self.initialization == 'random':
-                    mzi = MZI()   # random MZI
-                else:
-                    mzi = MZI(0, 0)                
+                mzi = self._mzi_init()               
                 L.embed_MZI(mzi, offset=port_index)
                 self.append_layer(L)
 
