@@ -79,7 +79,7 @@ Triangular Optimizers contain `up_down` and `spread` algorithms.  Here's a befor
 
 ![](img/traingular.png)
 
-Clements Optimizers contain `smart` and `basic` algorithms.
+Clements Optimizers contain `smart`, `smart_seq` (from paper), and `basic` algorithms.
 
 ![](img/clements.png)
 
