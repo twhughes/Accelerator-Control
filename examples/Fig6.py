@@ -36,15 +36,15 @@ for i, DE in enumerate(DE_range):
     gradient_list[i] = gradient(DE)
     length_list[i] = length(DE)
 
-print('for splitting structure, to accomplish {} eV of energy gain'.format(DE_range[-1]))
+print('\nfor splitting structure, to accomplish {} eV of energy gain'.format(DE_range[-1]))
 print('\tgradient of {} V/m'.format(gradient_list[-1]))
 print('\tN_wg of {}'.format(N_list[-1]))
-print('\tlenth of {}\n\n'.format(length_list[-1]))
+print('\tlength of (meters){}\n'.format(length_list[-1]))
 
 print('for direct coupling structure, to accomplish {} eV of energy gain'.format(DE_range[-1]))
 print('\tgradient of {} V/m'.format(gradient_direct))
 print('\tN_wg of {}'.format(np.sqrt(N_list[-1])))
-print('\tlenth of {}\n\n'.format(DE_range[-1] / gradient_direct))
+print('\tlength of {} (meters)\n'.format(DE_range[-1] / gradient_direct))
 
 fig, axs = plt.subplots(3, 1, sharex=True, constrained_layout=True)
 (ax1, ax2, ax3) = axs
