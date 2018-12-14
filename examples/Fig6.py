@@ -36,6 +36,16 @@ for i, DE in enumerate(DE_range):
     gradient_list[i] = gradient(DE)
     length_list[i] = length(DE)
 
+print('for splitting structure, to accomplish {} eV of energy gain'.format(DE_range[-1]))
+print('\tgradient of {} V/m'.format(gradient_list[-1]))
+print('\tN_wg of {}'.format(N_list[-1]))
+print('\tlenth of {}\n\n'.format(length_list[-1]))
+
+print('for direct coupling structure, to accomplish {} eV of energy gain'.format(DE_range[-1]))
+print('\tgradient of {} V/m'.format(gradient_direct))
+print('\tN_wg of {}'.format(np.sqrt(N_list[-1])))
+print('\tlenth of {}\n\n'.format(DE_range[-1] / gradient_direct))
+
 fig, axs = plt.subplots(3, 1, sharex=True, constrained_layout=True)
 (ax1, ax2, ax3) = axs
 
@@ -44,7 +54,7 @@ color_direct = '#da532c'
 
 ax1.plot(DE_range, gradient_list, label=r"splitting structure", color=color_split)
 ax1.plot([DE_range[0], DE_range[-1]], [gradient_direct, gradient_direct], '--', label=r"direct coupling", color=color_direct)
-ax1.legend(title="title")
+ax1.legend()
 ax1.set_xscale('log')
 ax1.set_yscale('log')
 # ax1.set_xlabel('energy gain (eV)')
@@ -71,7 +81,7 @@ ax3.plot([DE_range[0], DE_range[-1]], [DE_range[0] / gradient_direct , DE_range[
 ax3.legend()
 ax3.set_xscale('log')
 ax3.set_yscale('log')
-ax3.set_xlabel(r'$\Delta E$ (eV)')
+ax3.set_xlabel(r'$\Delta_E$ (eV)')
 ax3.set_ylabel('L (m)')
 ax3.grid()
 ax3.set_ylim([1e-5, 1e3])
