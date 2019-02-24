@@ -28,9 +28,9 @@ class MZI:
         M = np.zeros((2, 2), dtype=complex)
         M[0, 0] = np.cos(phi2/2)
         M[1, 0] = -np.sin(phi2/2)
-        M[0, 1] = np.exp(1j*phi1)*np.sin(phi2/2)
-        M[1, 1] = np.exp(1j*phi1)*np.cos(phi2/2)
-        M      = np.exp(1j*phi2/2)*M
+        M[0, 1] = np.exp(-1j*phi1)*np.sin(phi2/2)
+        M[1, 1] = np.exp(-1j*phi1)*np.cos(phi2/2)
+        M      = np.exp(1j*phi1/2)*M
         return M
 
     @property
