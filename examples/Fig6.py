@@ -36,7 +36,7 @@ gradient_direct = eta * np.sqrt((2 * Ud * eta_mzi) / (zeta * tau * N_pil * lambd
 
 # range of energies to look at
 NE = 10000
-DE_range = np.logspace(4, 6, NE)
+DE_range = np.logspace(4.25, 6, NE)
 
 N_list = np.zeros((NE, ))
 gradient_list = np.zeros((NE, ))
