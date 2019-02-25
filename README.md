@@ -2,7 +2,8 @@
 
 This code is used to simulate an MZI mesh used for phase and amplitude control of a dielectric laser accelerator.
 
-For more information, see [the accomanying paper draft]()
+For more information, see the accomanying paper draft (coming soon).
+
 ## Code Structure:
 The code is organized as follows
 
