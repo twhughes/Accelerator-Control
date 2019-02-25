@@ -4,6 +4,12 @@ This code is used to simulate an MZI mesh used for phase and amplitude control o
 
 For more information, see the accomanying paper draft (coming soon).
 
+## Installation / Usage
+
+To use, simply clone this directory and import the `DLA_Control/` package into your project.  
+
+See `examples/` for more details on how to do this.
+
 ## Code Structure:
 The code is organized as follows
 
@@ -13,8 +19,12 @@ The code is organized as follows
         plots.py
         util.py
     examples/
+        Fig4.py
+        Fig5.py
+        Fig6.py
         mesh_demo.py
         optimize_demo.py
+        phase_fun.py
     tests/
         test_coupling.py
         test_mesh.py
@@ -79,7 +89,7 @@ Triangular Optimizers contain `up_down` and `spread` algorithms.  Here's a befor
 
 ![](img/traingular.png)
 
-Clements Optimizers contain `smart`, `smart_seq` (from paper), and `basic` algorithms.
+Clements Optimizers contain `smart`, `smart_seq` (which is the one from the paper), and `basic` algorithms.
 
 ![](img/clements.png)
 
@@ -104,6 +114,14 @@ plot_bar_3d(power_map, ax=None)
 #### Other
 
 `utils.py` contains helper functions for normalizing vectors and getting powers from complex mode amplitudes.
+
+
+### Examples
+
+As explained previously, the `examples/` directory contains several examples of this package in use.
+
+`Fig{4,5,6}.py` generate the figures in the paper, so you can see how these calculations were performed.
+
 
 ### Tests
 
@@ -134,3 +152,22 @@ python -m unittest discover tests
 ```
 
 This can take several minutes.
+
+
+## Contributing
+
+This code is continuously developing and I am open to collaboration.  If you have any ideas for new features, or find any bugs, please make an issue or submit a pull request. 
+
+Things that would be nice to integrate:
+
+-  Incorporate this code with an actual MZI mesh for controlling an experimental demo.
+-  Simulating effects of noise, drift, fabrication errors, etc.
+-  Implementing damage / nonlinear constraints.  Fancy algorithms for even power distribution *within* the mesh itself.
+
+## Citing
+
+If you use this package, please cite us.  Bibtex reference coming soon once the paper is up on arxiv.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. Copyright 2018 Tyler Hughes.
