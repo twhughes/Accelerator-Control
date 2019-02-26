@@ -1,8 +1,8 @@
 # Accelerator Control
 
-This code is used to simulate an MZI mesh used for phase and amplitude control of a dielectric laser accelerator.
+This code simulates a mesh of inteferometers that are used to couple power from an array of optical waveguides to an accelerator on a chip.  It provides mechanisms for simulating and controlling these interferometers using various protocols and algorithms.
 
-For more information, see the accomanying paper draft (coming soon).
+For more information, see the accomanying paper draft (coming soon to an arxiv near you).
 
 ## Installation / Usage
 
