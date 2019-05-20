@@ -67,6 +67,10 @@ fig, axs = plt.subplots(3, 1, sharex=True, constrained_layout=True)
 color_split = '#2d89ef'
 color_direct = '#da532c'
 
+fontsize = 13
+font = {'size'   : fontsize}
+plt.rc('font', **font)
+
 ax1.plot(DE_range, gradient_list, label=r"splitting structure", color=color_split)
 ax1.plot([DE_range[0], DE_range[-1]], [gradient_direct, gradient_direct], '--', label=r"direct coupling", color=color_direct)
 ax1.legend()
