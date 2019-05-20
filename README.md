@@ -1,8 +1,8 @@
 # Accelerator Control
 
-This code is used to simulate an MZI mesh used for phase and amplitude control of a dielectric laser accelerator.
+This code simulates a mesh of inteferometers that are used to couple power from an array of optical waveguides to an accelerator on a chip.  It provides mechanisms for simulating and controlling these interferometers using various protocols and algorithms.
 
-For more information, see the accomanying paper draft (coming soon).
+For more information, see the accomanying paper draft [here](https://arxiv.org/abs/1902.09731)
 
 ## Installation / Usage
 
@@ -166,7 +166,14 @@ Things that would be nice to integrate:
 
 ## Citing
 
-If you use this package, please cite us.  Bibtex reference coming soon once the paper is up on arxiv.
+If you use this package, please cite us as
+
+    @misc{1902.09731,
+    Author = {Tyler W. Hughes and R. Joel England and Shanhui Fan},
+    Title = {Reconfigurable Photonic Circuit for Controlled Power Delivery to Laser-Driven Accelerators on a Chip},
+    Year = {2019},
+    Eprint = {arXiv:1902.09731},
+    }
 
 ## License
 
