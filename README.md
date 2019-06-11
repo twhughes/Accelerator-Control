@@ -2,7 +2,7 @@
 
 This code simulates a mesh of inteferometers that are used to couple power from an array of optical waveguides to an accelerator on a chip.  It provides mechanisms for simulating and controlling these interferometers using various protocols and algorithms.
 
-For more information, see the accomanying paper draft [here](https://arxiv.org/abs/1902.09731)
+For more information, see the accomanying paper [here](https://journals.aps.org/prapplied/abstract/10.1103/PhysRevApplied.11.064014). The arxiv preprint is [here](https://arxiv.org/abs/1902.09731) and included [as a pdf](./preprint.pdf).
 
 ## Installation / Usage
 
@@ -168,11 +168,19 @@ Things that would be nice to integrate:
 
 If you use this package, please cite us as
 
-    @misc{1902.09731,
-    Author = {Tyler W. Hughes and R. Joel England and Shanhui Fan},
-    Title = {Reconfigurable Photonic Circuit for Controlled Power Delivery to Laser-Driven Accelerators on a Chip},
-    Year = {2019},
-    Eprint = {arXiv:1902.09731},
+    @article{PhysRevApplied.11.064014,
+      title = {Reconfigurable Photonic Circuit for Controlled Power Delivery to Laser-Driven Accelerators on a Chip},
+      author = {Hughes, Tyler W. and England, R. Joel and Fan, Shanhui},
+      journal = {Phys. Rev. Applied},
+      volume = {11},
+      issue = {6},
+      pages = {064014},
+      numpages = {10},
+      year = {2019},
+      month = {Jun},
+      publisher = {American Physical Society},
+      doi = {10.1103/PhysRevApplied.11.064014},
+      url = {https://link.aps.org/doi/10.1103/PhysRevApplied.11.064014}
     }
 
 ## License
